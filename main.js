@@ -37,16 +37,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
     let audioCtx = null; 
     let activeOscillators = {};
 
-    startBtn.addEventListener("click", async () => {
-        //this code is what happens when the start button is actualy prssed
+startBtn.addEventListener("click", async () => {
 
-        if(!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
 
-                await audioCtx.resume(); 
-            
-    });
+  await audioCtx.resume();
+
+});
 
 
 //adding in the listeners to the keys - this will add and remove the listening oscillators. 
