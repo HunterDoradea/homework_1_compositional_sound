@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 }
     //right here i can add the start button functionality 
     let audioCtx = null; 
-    let activeOscillators = {}
+    let activeOscillators = {};
 
     startBtn.addEventListener("click", async () => {
         //this code is what happens when the start button is actualy prssed
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
                 await audioCtx.resume(); 
             
-    }
+    });
 
 
 //adding in the listeners to the keys - this will add and remove the listening oscillators. 
