@@ -1,1 +1,48 @@
+<!doctype html>
 
+<html lang="en">
+
+  
+  <head>
+    
+    <meta charset="utf-8" />
+    <!-- my title-->
+    <title>Homework 1: WebAudio Keyboard</title>
+    <!-- the styling sheet linked to this-->
+    <link rel="stylesheet" href="style.css" />
+    
+  </head>
+
+  <body>
+
+    <main class="wrap">
+
+      <!-- Controls row: start audio + waveform selector -->
+      <div class="row">
+        <!-- Start Audio button: -->
+        <button id="startBtn">Start Audio</button>
+
+        <!-- Waveform selector c-->
+        <label>
+          Waveform:
+          <select id="waveform">
+            <option value="sine">sine</option>
+            <option value="sawtooth">sawtooth</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Instructions -->
+      <p class="hint">
+        Click <b>Start Audio</b>, then use keys:
+        Z S X D C V G B H N J M (and Q 2 W 3 E R 5 T 6 Y 7 U).
+      </p>
+
+
+    </main>
+
+    <!-- always load the javascript at the end so that the actual page finishes loading - but he said that doesn't matter on small programs like this-->
+    <script src="main.js"></script>
+  </body>
+  
+</html>
