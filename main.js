@@ -35,17 +35,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
     '85': 987.766602512248223,  //U - B
 }
 
+    //settings and webaudio states - this is the nitty gritty part of it
 
-let audioCtx = null;
+  let audioCtx = null;
   let globalGain = null;
-
   const activeVoices = {};
+  const MASTER_GAIN = 0.3;
+  const MIX_HEADROOM = 0.8;
+  const RELEASE_TC = 0.07;  
+  const EPS = 0.0001; //super tiny number to avoid non zero number
 
-  const MASTER_GAIN = 0.4;
-  const MIX_HEADROOM = 0.9;
-  const RELEASE_TC = 0.06;  
-  const EPS = 0.0001;
 
+    //the start button 
   startBtn.addEventListener("click", async () => {
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -58,6 +59,9 @@ let audioCtx = null;
     await audioCtx.resume();
   });
 
+
+    
+//event listeners 
   window.addEventListener("keydown", keyDown, false);
   window.addEventListener("keyup", keyUp, false);
 
@@ -71,6 +75,9 @@ let audioCtx = null;
       activeVoices[k].voiceGain.gain.setTargetAtTime(perVoice, now, 0.01);
     });
   }
+
+
+    
 //the creative part - i wanna change the colors on every key based on the frequency! 
   function setBackground(freq) {
     const t = Date.now() / 1000;
@@ -78,6 +85,8 @@ let audioCtx = null;
     document.body.style.backgroundColor = `hsl(${hue} 55% 14%)`;
   }
 
+    
+//this is what happens when the keydown
   function keyDown(event) {
     if (!audioCtx) return;
     if (event.repeat) return;
@@ -89,6 +98,9 @@ let audioCtx = null;
     }
   }
 
+
+    
+//this is the keyup event 
   function keyUp(event) {
     if (!audioCtx) return;
 
@@ -99,6 +111,7 @@ let audioCtx = null;
     }
   }
 
+    //the functinality that acatully lays the notes - i've incorporated the values/settings above
   function playNote(key) {
     const freq = keyboardFrequencyMap[key];
     const now = audioCtx.currentTime;
@@ -126,6 +139,7 @@ let audioCtx = null;
     setBackground(freq);
   }
 
+    //and stopping the note - the funcitnality behind that. 
   function stopNote(key) {
     const v = activeVoices[key];
     const now = audioCtx.currentTime;
@@ -142,5 +156,7 @@ let audioCtx = null;
       if (audioCtx) updateVoiceGains();
     };
   }
+
+    
 
 });
