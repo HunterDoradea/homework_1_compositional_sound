@@ -1,8 +1,9 @@
+//to start - i have to initialize the audio context and setup a gain node: 
 document.addEventListener("DOMContentLoaded", function(event) {
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-
+//this is the actualy keyboard assignment map - i can change this later and customize it. 
    const keyboardFrequencyMap = {
     '90': 261.625565300598634,  //Z - C
     '83': 277.182630976872096, //S - C#
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 }
 
 
-
+//adding in the listeners to the keys - this will add and remove the listening oscillators. 
 
 window.addEventListener('keydown', keyDown, false);
 window.addEventListener('keyup', keyUp, false);
@@ -52,3 +53,14 @@ function keyUp(event) {
         delete activeOscillators[key];
     }
 }
+
+
+    //this is how we will actually play the sound 
+function playNote(key) {
+    const osc = audioCtx.createOscillator();
+    osc.frequency.setValueAtTime(keyboardFrequencyMap[key], audioCtx.currentTime)
+    osc.type = 'sine' //choose your favorite waveform
+    osc.connect(audioCtx.destination)
+    osc.start();
+    activeOscillators[key] = osc
+  }
