@@ -33,42 +33,33 @@ document.addEventListener("DOMContentLoaded", function(event) {
     '55': 932.327523036179832, //7 - A#
     '85': 987.766602512248223,  //U - B
 }
-    //right here i can add the start button functionality 
-    let audioCtx = null; 
-    let globalGain = null;
-    const activeVoices = {};
-    //let activeOscillators = {};
-
-    const MASTER_GAIN = 0.4;
-    const MIX_HEADROOM = 0.9;
-    const RELEASE_SECONDS = 0.06;
-    const EPS = 0.0001; //this is the super tiny value i can use so it's not 0 lol
 
 
-startBtn.addEventListener("click", async () => {
+let audioCtx = null;
+  let globalGain = null;
 
-    // Create AudioContext 
+  const activeVoices = {};
+
+  const MASTER_GAIN = 0.4;
+  const MIX_HEADROOM = 0.9;
+  const RELEASE_TC = 0.06;  
+  const EPS = 0.0001;
+
+  startBtn.addEventListener("click", async () => {
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
       globalGain = audioCtx.createGain();
       globalGain.gain.setValueAtTime(MASTER_GAIN, audioCtx.currentTime);
-
-      // connect to the speaker 
       globalGain.connect(audioCtx.destination);
     }
 
-    // Resume audio - this might not be necessary - i'll test it 
     await audioCtx.resume();
   });
 
-  
+  window.addEventListener("keydown", keyDown, false);
+  window.addEventListener("keyup", keyUp, false);
 
-//adding in the listeners to the keys - this will add and remove the listening oscillators. 
-//this is the listening event codes
-window.addEventListener('keydown', keyDown, false);
-window.addEventListener('keyup', keyUp, false);
-
-//here i can add the polyphony scaling part: 
   function updateVoiceGains() {
     const keys = Object.keys(activeVoices);
     const n = Math.max(keys.length, 1);
@@ -79,37 +70,34 @@ window.addEventListener('keyup', keyUp, false);
       activeVoices[k].voiceGain.gain.setTargetAtTime(perVoice, now, 0.01);
     });
   }
-
-//the creative - aspect - i wanna have it change color each key: 
+//the creative part - i wanna change the colors on every key based on the frequency! 
   function setBackground(freq) {
     const t = Date.now() / 1000;
     const hue = Math.floor((Math.log2(freq) * 97 + t * 25) % 360);
     document.body.style.backgroundColor = `hsl(${hue} 55% 14%)`;
   }
 
-    
+  function keyDown(event) {
+    if (!audioCtx) return;
+    if (event.repeat) return;
 
-function keyDown(event) {
-    //converst key pressed to string 
-    const key = (event.detail || event.which).toString();
-    //if the key is on the map above AND it's not active then play sound
-    if (keyboardFrequencyMap[key] && !activeOscillators[key]) {
+    const key = (event.keyCode || event.which).toString();
+
+    if (keyboardFrequencyMap[key] && !activeVoices[key]) {
       playNote(key);
     }
-}
+  }
 
-function keyUp(event) {
-    //this converst the key we pressed to a string
-    const key = (event.detail || event.which).toString();
-    //so if the key is currently active then stop it and then delete it. 
-    if (keyboardFrequencyMap[key] && activeOscillators[key]) {
-        activeOscillators[key].stop();
-        delete activeOscillators[key];
+  function keyUp(event) {
+    if (!audioCtx) return;
+
+    const key = (event.keyCode || event.which).toString();
+
+    if (keyboardFrequencyMap[key] && activeVoices[key]) {
+      stopNote(key);
     }
-}
+  }
 
-
-    //this is how we will actually play the sound 
   function playNote(key) {
     const freq = keyboardFrequencyMap[key];
     const now = audioCtx.currentTime;
@@ -120,7 +108,7 @@ function keyUp(event) {
 
     const envGain = audioCtx.createGain();
     envGain.gain.setValueAtTime(EPS, now);
-    envGain.gain.exponentialRampToValueAtTime(1.0, now + 0.01); // quick fade-in
+    envGain.gain.exponentialRampToValueAtTime(1.0, now + 0.01);
 
     const voiceGain = audioCtx.createGain();
     voiceGain.gain.setValueAtTime(0.0, now);
@@ -137,7 +125,6 @@ function keyUp(event) {
     setBackground(freq);
   }
 
-//stop the note 0 so it fades to 0: 
   function stopNote(key) {
     const v = activeVoices[key];
     const now = audioCtx.currentTime;
@@ -154,6 +141,5 @@ function keyUp(event) {
       if (audioCtx) updateVoiceGains();
     };
   }
-
 
 });
