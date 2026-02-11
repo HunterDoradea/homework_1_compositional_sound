@@ -1,7 +1,10 @@
 //to start - i have to initialize the audio context and setup a gain node: 
 document.addEventListener("DOMContentLoaded", function(event) {
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    //i have to define the buttons too
+    const startBtn = document.getElementById("startBtn");
+
+    const waveformSelect = document.getElementById("waveform");
 
 //this is the actualy keyboard assignment map - i can change this later and customize it. 
    const keyboardFrequencyMap = {
