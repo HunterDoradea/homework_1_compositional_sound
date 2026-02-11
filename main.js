@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const waveformSelect = document.getElementById("waveform");
 
 //this is the actualy keyboard assignment map - i can change this later and customize it. 
+    //this part i just copied from the assginment he gave us - the keyboard mapping
    const keyboardFrequencyMap = {
     '90': 261.625565300598634,  //Z - C
     '83': 277.182630976872096, //S - C#
