@@ -30,24 +30,41 @@ document.addEventListener("DOMContentLoaded", function(event) {
     '55': 932.327523036179832, //7 - A#
     '85': 987.766602512248223,  //U - B
 }
+    //right here i can add the start button functionality 
+    let audioCtx = null; 
+    let activeOscillators = {}
+
+    startBtn.addEventListener("click", async () => {
+        //this code is what happens when the start button is actualy prssed
+
+        if(!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+                await audioCtx.resume(); 
+            
+    }
 
 
 //adding in the listeners to the keys - this will add and remove the listening oscillators. 
-
+//this is the listening event codes
 window.addEventListener('keydown', keyDown, false);
 window.addEventListener('keyup', keyUp, false);
 
-activeOscillators = {}
 
 function keyDown(event) {
+    //converst key pressed to string 
     const key = (event.detail || event.which).toString();
+    //if the key is on the map above AND it's not active then play sound
     if (keyboardFrequencyMap[key] && !activeOscillators[key]) {
       playNote(key);
     }
 }
 
 function keyUp(event) {
+    //this converst the key we pressed to a string
     const key = (event.detail || event.which).toString();
+    //so if the key is currently active then stop it and then delete it. 
     if (keyboardFrequencyMap[key] && activeOscillators[key]) {
         activeOscillators[key].stop();
         delete activeOscillators[key];
@@ -57,10 +74,18 @@ function keyUp(event) {
 
     //this is how we will actually play the sound 
 function playNote(key) {
+    //this actually creates the oscillator
     const osc = audioCtx.createOscillator();
+    //this sets the pitch 
     osc.frequency.setValueAtTime(keyboardFrequencyMap[key], audioCtx.currentTime)
-    osc.type = 'sine' //choose your favorite waveform
+    //this is where the DROPDOWN menu option will take place
+    osc.type = waveformSelect.value;
+    //this connects to the speaker 
     osc.connect(audioCtx.destination)
+    //and this starts the sound
     osc.start();
+    //this saves teh oscillator so we can stop it on key-up.
     activeOscillators[key] = osc
   }
+
+});
